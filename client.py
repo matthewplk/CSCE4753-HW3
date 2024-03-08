@@ -24,7 +24,8 @@ playerSocket = socket(AF_INET, SOCK_STREAM)
 print("Before the playerSocket connects.")
 playerSocket.connect((serverName, serverPort)) # They connect to the server.
 print("After the playerSocket connects, before sending receive for gameTitle.")
-gameTitle = playerSocket.recv(1024)
+sentTitle = playerSocket.recv(1024)
+gameTitle = sentTitle.decode('utf-8')
 print("gameTitle has been recv!")
 print(gameTitle)
 
@@ -33,13 +34,14 @@ wrongs = 0
 
 try:
     print("Before Client While Loop")
-    while guessCount >= 0 and wrongs <= 6: #ADDED THERE IS NO WRONGS UPDATING.
+    while wrongs <= 7 and guessCount >= 0: #ADDED THERE IS NO WRONGS UPDATING.
 
         print("Before currentList is updated.\n")
-        currentList = playerSocket.recv(1024) #ADDED
-        print(currentList)
+        sentList = playerSocket.recv(1024) #ADDED
+        currentList = sentList.decode('utf-8')
+        print(currentList + ", Guesses Left: %2d" % (guessCount))
 
-        if currentList == 'ARKANSAS':
+        if currentList == "ARKANSAS":
             print("You win!!")
             print("CLOSING SERVER CONNECTION.")
             # Close connection to client but do not close welcome socket
@@ -48,20 +50,22 @@ try:
             break
 
         elif guessCount == 0:
-            print("You ran out of guesses!")
+            print("You Lose! You ran out of guesses!")
             print("CLOSING SERVER CONNECTION.")
             # Close connection to client but do not close welcome socket
             playerSocket.close()
             print("SERVER CONNECTION IS CLOSED.")
             break
 
-        elif wrongs == 6:
-            print("HANGMAN! You got too many wrong!")
+        elif wrongs == 7:
+            print("HANGMAN! You lose! You got too many wrong!")
             print("CLOSING SERVER CONNECTION.")
             # Close connection to client but do not close welcome socket
             playerSocket.close()
             print("SERVER CONNECTION IS CLOSED.")
             break
+
+        
 
         print("Inside the client Loop")
         # Get sentence from user
@@ -75,10 +79,19 @@ try:
         print("After SEND!!!") 
 
         # Receive response from server via socket
-        # print("Before recv.")
-        # currGameState = playerSocket.recv(1024)
-        # print(currGameState)
-        # print("After recv.")
+        print("Before recv.")
+        sentGameState = playerSocket.recv(1024)
+        currGameState = sentGameState.decode('utf-8')
+        print(currGameState)
+        if currGameState == "Your letter is WRONG.":
+                wrongs +=1
+
+        
+        print("After recv.")
+
+        test = "t1" #TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+        t1 = test.encode('utf-8')
+        playerSocket.send(t1)
 
         guessCount -= 1
 

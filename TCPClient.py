@@ -15,7 +15,7 @@ from socket import *
 # Use defaults
 if sys.argv.__len__() != 3:
     serverName = 'localhost'
-    serverPort = 25731 #5555
+    serverPort = 25730 #5555
 # Get from command line
 else:
     serverName = sys.argv[1]

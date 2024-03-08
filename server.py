@@ -49,7 +49,7 @@ connectionSocket.send(Title)
 
 try:
     # Forever, read in sentence, convert to uppercase, and send
-    while guess >= 0 and wrongs <= 6: #might need and.
+    while guess >= 0 and wrongs <= 7: #might need and.
 
         # This keeps track of the list so far.
         print("Printing currList, about to send Client String.")
@@ -59,11 +59,11 @@ try:
         print(clientString)
 
         print("ToClient MSG is encoded now.")
+        print(clientString)
         ToClient = clientString.encode('utf-8')
         print("Encoded, about to send")
         connectionSocket.send(ToClient)
         print("SENT TO CLIENT")
-        # ^^THIS AND CLIENT BROKE ASF.
 
         if currList == answerList:
             print("You win!!")
@@ -81,7 +81,7 @@ try:
             print("CLIENT CONNECTION IS CLOSED.")
             break
 
-        elif wrongs == 6:
+        elif wrongs == 7:
             print("HANGMAN! You got too many wrong!")
             print("CLOSING CLIENT CONNECTION.")
             # Close connection to client but do not close welcome socket
@@ -183,8 +183,8 @@ try:
                 currList[3] = 'A'
                 currList[6] = 'A'
                 CorrectA = "A was in the word!"
-                # sendCorrectA = CorrectA.encode('utf-8')
-                # connectionSocket.send(sendCorrectA)
+                sendCorrectA = CorrectA.encode('utf-8')
+                connectionSocket.send(sendCorrectA)
             case 'R':
                 currList[1] = 'R'
                 CorrectR = "R was in the word!"
@@ -193,29 +193,35 @@ try:
             case 'K':
                 currList[2] = 'K'
                 CorrectK = "K was in the word!"
-                # sendCorrectK = CorrectK.encode('utf-8')
-                # connectionSocket.send(sendCorrectK)
+                sendCorrectK = CorrectK.encode('utf-8')
+                connectionSocket.send(sendCorrectK)
             case 'N':
                 currList[4] = 'N'
                 CorrectN = "N was in the word!"
-                # sendCorrectN = CorrectN.encode('utf-8')
-                # connectionSocket.send(sendCorrectN)
+                sendCorrectN = CorrectN.encode('utf-8')
+                connectionSocket.send(sendCorrectN)
             case 'S':
                 currList[5] = 'S'
                 currList[7] = 'S'
                 CorrectS= "S was in the word!"
-                # sendCorrectS = CorrectS.encode('utf-8')
-                # connectionSocket.send(sendCorrectS)
+                sendCorrectS = CorrectS.encode('utf-8')
+                connectionSocket.send(sendCorrectS)
             case _:
                 wrongList.append(playerWordUP)
                 wrongs +=1
-                WrongsMSG = "Your letter ->(" + playerWordUP + "), is WRONG."
+                WrongsMSG = "Your letter is WRONG."
                 print(WrongsMSG)
-                # WrongMSGsent = WrongsMSG.encode('utf-8')
-                # connectionSocket.send(WrongMSGsent)
+                WrongMSGsent = WrongsMSG.encode('utf-8')
+                connectionSocket.send(WrongMSGsent)
+
+
+        Tt1 = connectionSocket.recv(1024) #TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+        t1 = Tt1.decode('utf-8')
+
   
 finally:
     print("CLOSING CLIENT CONNECTION AGAIN.")
     # Close connection to client but do not close welcome socket
     connectionSocket.close()
+    gameSocket.close()
     print("CLIENT CONNECTION IS CLOSED AGAIN.")
