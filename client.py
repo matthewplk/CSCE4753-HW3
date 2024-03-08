@@ -18,21 +18,73 @@ else:
     serverPort = int(sys.argv[2])
 
 # Choose SOCK_STREAM, which is TCP
-clientSocket = socket(AF_INET, SOCK_STREAM)
+playerSocket = socket(AF_INET, SOCK_STREAM)
 
 # Connect to server using hostname/IP and port
-clientSocket.connect((serverName, serverPort))
+print("Before the playerSocket connects.")
+playerSocket.connect((serverName, serverPort)) # They connect to the server.
+print("After the playerSocket connects, before sending receive for gameTitle.")
+gameTitle = playerSocket.recv(1024)
+print("gameTitle has been recv!")
+print(gameTitle)
 
-# Get sentence from user
-sentence = input('Input lowercase sentence: ')
+guessCount = 8
+wrongs = 0
 
-# Send it into socket to server
-sentenceBytes = sentence.encode('utf-8')
-clientSocket.send(sentenceBytes)
+try:
+    print("Before Client While Loop")
+    while guessCount >= 0 and wrongs <= 6: #ADDED THERE IS NO WRONGS UPDATING.
 
-# Receive response from server via socket
-modifiedSentence = clientSocket.recv(1024)
+        print("Before currentList is updated.\n")
+        currentList = playerSocket.recv(1024) #ADDED
+        print(currentList)
 
-print('From Server: {0}'.format(modifiedSentence.decode('utf-8')))
+        if currentList == 'ARKANSAS':
+            print("You win!!")
+            print("CLOSING SERVER CONNECTION.")
+            # Close connection to client but do not close welcome socket
+            playerSocket.close()
+            print("SERVER CONNECTION IS CLOSED.")
+            break
 
-clientSocket.close()
+        elif guessCount == 0:
+            print("You ran out of guesses!")
+            print("CLOSING SERVER CONNECTION.")
+            # Close connection to client but do not close welcome socket
+            playerSocket.close()
+            print("SERVER CONNECTION IS CLOSED.")
+            break
+
+        elif wrongs == 6:
+            print("HANGMAN! You got too many wrong!")
+            print("CLOSING SERVER CONNECTION.")
+            # Close connection to client but do not close welcome socket
+            playerSocket.close()
+            print("SERVER CONNECTION IS CLOSED.")
+            break
+
+        print("Inside the client Loop")
+        # Get sentence from user
+        letterGuess = input('Guess a letter one at a time in the word: ')
+
+        print("After Input, before encoding.")
+        # Send it into socket to server
+        guessBytes = letterGuess.encode('utf-8')
+        print("After encoding, before sending.")
+        playerSocket.send(guessBytes)
+        print("After SEND!!!") 
+
+        # Receive response from server via socket
+        # print("Before recv.")
+        # currGameState = playerSocket.recv(1024)
+        # print(currGameState)
+        # print("After recv.")
+
+        guessCount -= 1
+
+
+finally:
+    print("ENDING SESSION...")
+    playerSocket.close()
+
+
