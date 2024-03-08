@@ -30,7 +30,6 @@ guessCount = 8
 wrongs = 0
 
 try:
-    print("Before Client While Loop")
     while wrongs <= 7 and guessCount >= 0: #ADDED THERE IS NO WRONGS UPDATING.
 
         sentList = playerSocket.recv(1024) #ADDED
