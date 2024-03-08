@@ -38,10 +38,7 @@ gameSocket.bind(('', gamePort))
 gameSocket.listen(1) # 1 player allowed.
 
 print("Waiting for players...")
-
-print("Before the while loop, before connectionSocket")
 connectionSocket, addr = gameSocket.accept() # Pick up Player 1
-print("Player should be connected now.")
 
 PropInfo = "HANGMAN: Guess the 8-Letter Word!"
 Title = PropInfo.encode('utf-8')
@@ -50,27 +47,17 @@ connectionSocket.send(Title)
 try:
     # Forever, read in sentence, convert to uppercase, and send
     while guess >= 0 and wrongs <= 7: #might need and.
-
         # This keeps track of the list so far.
-        print("Printing currList, about to send Client String.")
         print(currList)
-        print("converting clientString to string")
         clientString = ''.join(map(str,currList))
-        print(clientString)
-
-        print("ToClient MSG is encoded now.")
-        print(clientString)
         ToClient = clientString.encode('utf-8')
-        print("Encoded, about to send")
         connectionSocket.send(ToClient)
-        print("SENT TO CLIENT")
 
         if currList == answerList:
             print("You win!!")
             print("CLOSING CLIENT CONNECTION.")
             # Close connection to client but do not close welcome socket
             connectionSocket.close()
-            print("CLIENT CONNECTION IS CLOSED.")
             break
 
         elif guess == 0:
@@ -78,7 +65,6 @@ try:
             print("CLOSING CLIENT CONNECTION.")
             # Close connection to client but do not close welcome socket
             connectionSocket.close()
-            print("CLIENT CONNECTION IS CLOSED.")
             break
 
         elif wrongs == 7:
@@ -86,7 +72,6 @@ try:
             print("CLOSING CLIENT CONNECTION.")
             # Close connection to client but do not close welcome socket
             connectionSocket.close()
-            print("CLIENT CONNECTION IS CLOSED.")
             break
 
         match wrongs:
@@ -157,25 +142,13 @@ try:
                 
 
         # Read bytes from socket
-        print("Server before receiving from client")
-
         playerChar = connectionSocket.recv(1024) # receive the encoded byte message char from player
-
-        print("Server after receiving from client, before decoding.")
-
         currWordPart = playerChar.decode('utf-8') # decode byte message char from player
-
-        print("Server after decoding, before upper.")
-
         playerWordUP = currWordPart.upper() # convert to uppercase
-
-        print("Server Received a Letter!: " + playerWordUP)
-
-        print("Guess Count before decrement: %2d" % (guess))
 
         guess -= 1 # decrease allowed guess count
 
-        print("Guess Count after decrement: %2d" % (guess))
+        print("Guess Count: %2d" % (guess))
 
         match playerWordUP:
             case 'A':
@@ -210,12 +183,11 @@ try:
                 wrongList.append(playerWordUP)
                 wrongs +=1
                 WrongsMSG = "Your letter is WRONG."
-                print(WrongsMSG)
                 WrongMSGsent = WrongsMSG.encode('utf-8')
                 connectionSocket.send(WrongMSGsent)
 
 
-        Tt1 = connectionSocket.recv(1024) #TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+        Tt1 = connectionSocket.recv(1024) 
         t1 = Tt1.decode('utf-8')
 
   

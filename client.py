@@ -21,12 +21,9 @@ else:
 playerSocket = socket(AF_INET, SOCK_STREAM)
 
 # Connect to server using hostname/IP and port
-print("Before the playerSocket connects.")
 playerSocket.connect((serverName, serverPort)) # They connect to the server.
-print("After the playerSocket connects, before sending receive for gameTitle.")
 sentTitle = playerSocket.recv(1024)
 gameTitle = sentTitle.decode('utf-8')
-print("gameTitle has been recv!")
 print(gameTitle)
 
 guessCount = 8
@@ -36,7 +33,6 @@ try:
     print("Before Client While Loop")
     while wrongs <= 7 and guessCount >= 0: #ADDED THERE IS NO WRONGS UPDATING.
 
-        print("Before currentList is updated.\n")
         sentList = playerSocket.recv(1024) #ADDED
         currentList = sentList.decode('utf-8')
         print(currentList + ", Guesses Left: %2d" % (guessCount))
@@ -46,7 +42,6 @@ try:
             print("CLOSING SERVER CONNECTION.")
             # Close connection to client but do not close welcome socket
             playerSocket.close()
-            print("SERVER CONNECTION IS CLOSED.")
             break
 
         elif guessCount == 0:
@@ -54,7 +49,6 @@ try:
             print("CLOSING SERVER CONNECTION.")
             # Close connection to client but do not close welcome socket
             playerSocket.close()
-            print("SERVER CONNECTION IS CLOSED.")
             break
 
         elif wrongs == 7:
@@ -62,32 +56,24 @@ try:
             print("CLOSING SERVER CONNECTION.")
             # Close connection to client but do not close welcome socket
             playerSocket.close()
-            print("SERVER CONNECTION IS CLOSED.")
             break
 
         
 
-        print("Inside the client Loop")
         # Get sentence from user
         letterGuess = input('Guess a letter one at a time in the word: ')
 
-        print("After Input, before encoding.")
         # Send it into socket to server
         guessBytes = letterGuess.encode('utf-8')
-        print("After encoding, before sending.")
         playerSocket.send(guessBytes)
-        print("After SEND!!!") 
 
         # Receive response from server via socket
-        print("Before recv.")
         sentGameState = playerSocket.recv(1024)
         currGameState = sentGameState.decode('utf-8')
         print(currGameState)
         if currGameState == "Your letter is WRONG.":
                 wrongs +=1
 
-        
-        print("After recv.")
 
         test = "t1" #TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
         t1 = test.encode('utf-8')
